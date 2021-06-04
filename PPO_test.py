@@ -86,37 +86,49 @@ if __name__ == '__main__':
     os.makedirs(log_dir, exist_ok=True)
 
     # create a gym environment, CartPole-v1 (5e5), HalfCheetah-v2 (2e6)
-    env_id = "CartPole-v1"
+    env_id = "HalfCheetah-v2"
     algo = "PPO"
-    timesteps = 5e5
+    timesteps = 2e6
     episode = 5
-    # activation function in pytorch:
-    # nn.ReLU(), nn.Tanh(), nn.Sigmoid(), nn.LeakyReLU()
 
     # create environment
     env = gym.make(env_id)
     rewards = []
     min_len = timesteps
+
     opt_str = ['Adam', 'RMSprop', 'SGD']
     optimizers = [th.optim.Adam, th.optim.RMSprop, th.optim.SGD]
+
     for index, optimizer in enumerate(optimizers):
         for _ in range(episode):
             # reset the environment
             env.reset()
+            # record the reward for every update
             env = Monitor(env, log_dir)
+
             # model definition
+            # modification of optimizer (th.optim.Adam, th.optim.RMSprop, th.optim.SGD)
             model = PPO("MlpPolicy", env, verbose=1, policy_kwargs={'optimizer_class': optimizer})
+            # modification of activation function (nn.ReLU(), nn.Tanh(), nn.Sigmoid(), nn.LeakyReLU())
             # model = PPO(ActivationActorCriticPolicy, env, verbose=1)
+
             # model training
             model.learn(total_timesteps=timesteps)
+
+            # save the reward result in DataFrame
             log = load_results(log_dir)
             rewards.append(log['r'])
             os.remove(f"{log_dir}monitor.csv")
+            # in order to keep the same column length
             if len(log['r']) < min_len:
                 min_len = len(log['r'])
+
+        # merge the results
         reward_df = pd.DataFrame()
         for i in range(episode):         
             reward_df = pd.concat([reward_df, rewards[i][:min_len]], axis=1, ignore_index=True)
+
+        # save the results as pickle
         pkl_file = f"./logs/{algo}_{env_id}_{opt_str[index]}.pkl"
         reward_df.to_pickle(pkl_file)
     

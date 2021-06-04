@@ -64,7 +64,5 @@ for log in pkl_paths:
 plt.legend()
 plt.xlabel('Iteration')
 plt.ylabel('Reward')
-plt.title('PPO performance on CartPole-v1')
+plt.title('The impact of modifying optimizer in PPO for CartPole-v1')
 plt.show()
-
-#%%
