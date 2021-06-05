@@ -50,7 +50,7 @@ def set_size(width, fraction=1):
     fig_dim = (fig_width_in, fig_height_in)
     return fig_dim
 
-pkl_dir = '/Users/yuqichengzhu/Desktop/DeepRL-master/20210601/logs/optimizer'
+pkl_dir = '/Users/yuqichengzhu/Desktop/DeepRL-master/20210601/logs/CheetahOptimizer'
 pkl_paths = [os.path.join(pkl_dir, path) for path in os.listdir(pkl_dir) if path.endswith('.pkl')]
 fig, ax = plt.subplots(1,1,figsize=set_size(width))
 for log in pkl_paths:
@@ -64,5 +64,5 @@ for log in pkl_paths:
 plt.legend()
 plt.xlabel('Iteration')
 plt.ylabel('Reward')
-plt.title('The impact of modifying optimizer in PPO for CartPole-v1')
+plt.title('The impact of modifying optimizer in PPO for HalfCheetah-v2')
 plt.show()
